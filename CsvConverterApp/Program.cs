@@ -68,7 +68,7 @@ namespace MyApp
                 var values = new List<string>();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    values.Add(reader.GetValue(i)?.ToString()?.Replace(",", " ") ?? "");
+                    values.Add(reader.GetValue(i)?.ToString().Replace(",", " ") ?? "");
                 }
 
                 sb.AppendLine($"\"{string.Join(",", values)}\"");
