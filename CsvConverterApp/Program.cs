@@ -20,7 +20,9 @@ namespace MyApp
             Console.InputEncoding = Encoding.UTF8;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            while (true)
+            bool keepRunning = true;
+
+            while (keepRunning)
             {
                 Console.WriteLine("\nИзбери опция:");
                 Console.WriteLine("1. Избери .xlsx файл и го конвертирай в .csv");
@@ -39,7 +41,8 @@ namespace MyApp
                         CustomTableEntry();
                         break;
                     case "0":
-                        return;
+                        keepRunning = false;
+                        break;
                     default:
                         Console.WriteLine("Невалиден избор.");
                         break;
@@ -63,7 +66,6 @@ namespace MyApp
 
             var sb = new StringBuilder();
 
-            //popravka
             while (reader.Read())
             {
                 var values = new List<string>();
@@ -82,7 +84,6 @@ namespace MyApp
 
                 sb.AppendLine(string.Join(",", values));
             }
-            //gotovo
 
             Console.Write("Въведи път за запис на .csv файл: ");
             var outputPath = Console.ReadLine();
@@ -95,13 +96,15 @@ namespace MyApp
 
         static void CustomTableEntry()
         {
-            Console.Write("Въведи имена на колоните, разделени със запетая (NA LATINICA!!!): ");
+            Console.Write("Въведи имена на колоните, разделени със запетая (напр. Name,Age,City): ");
             var columnInput = Console.ReadLine();
             var columns = columnInput.Split(',').Select(c => c.Trim()).ToList();
 
             var rows = new List<List<string>>();
 
-            while (true)
+            bool addMoreRows = true;
+
+            while (addMoreRows)
             {
                 var currentRow = new List<string>();
                 Console.WriteLine("Въведи стойности за реда:");
@@ -115,7 +118,8 @@ namespace MyApp
                 rows.Add(currentRow);
 
                 Console.Write("Добави още един ред? (y/n): ");
-                if (Console.ReadLine().ToLower() != "y") break;
+                var input = Console.ReadLine()?.ToLower();
+                addMoreRows = (input == "y");
             }
 
             Console.Write("Въведи път за запис на .csv файл: ");
