@@ -17,8 +17,8 @@ namespace MyApp
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
+            Console.InputEncoding = Encoding.UTF8;
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
 
             while (true)
             {
@@ -45,72 +45,84 @@ namespace MyApp
                         break;
                 }
             }
+        }
 
-            static void ConvertExcelToCsv()
+        static void ConvertExcelToCsv()
+        {
+            Console.Write("Въведи път до Excel (.xlsx) файл: ");
+            var filePath = Console.ReadLine();
+
+            if (!File.Exists(filePath))
             {
-                Console.Write("Въведи път до Excel (.xlsx) файл: ");
-                var filePath = Console.ReadLine();
-
-                if (!File.Exists(filePath))
-                {
-                    Console.WriteLine("Файлът не съществува.");
-                    return;
-                }
-
-                using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
-                using var reader = ExcelReaderFactory.CreateReader(stream);
-
-                var sb = new StringBuilder();
-
-                while (reader.Read())
-                {
-                    var values = new List<string>();
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        values.Add($"\"{reader.GetValue(i)?.ToString()?.Replace("\"", "\"\"")}\"");
-                    }
-
-                    sb.AppendLine(string.Join(";", values));
-                }
-
-                Console.Write("Въведи път за запис на .csv файл: ");
-                var outputPath = Console.ReadLine();
-                File.WriteAllText(outputPath, sb.ToString(), Encoding.UTF8);
-
-                Console.WriteLine("Успешно конвертирано.");
+                Console.WriteLine("Файлът не съществува.");
+                return;
             }
 
-            static void CustomTableEntry()
+            using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+
+            var sb = new StringBuilder();
+
+            while (reader.Read())
             {
-                Console.Write("Въведи имена на колоните, разделени със запетая (напр. Име,Възраст,Град): ");
-                var columnInput = Console.ReadLine();
-                var columns = columnInput.Split(',').Select(c => c.Trim()).ToList();
-
-                var rows = new List<List<string>>();
-
-                while (true)
+                var values = new List<string>();
+                for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    var currentRow = new List<string>();
-                    Console.WriteLine("Въведи стойности за ред:");
-
-                    foreach (var column in columns)
-                    {
-                        Console.Write($"{column}: ");
-                        currentRow.Add(Console.ReadLine());
-                    }
-
-                    rows.Add(currentRow);
-
-                    Console.Write("Добави още ред? (y/n): ");
-                    if (Console.ReadLine().ToLower() != "y") break;
+                    values.Add(reader.GetValue(i)?.ToString()?.Replace(",", " ") ?? "");
                 }
 
-                Console.Write("Въведи път за запис на .csv файл: ");
-                var filePath = Console.ReadLine();
-
-                CsvExporter.ExportCustomListToCsv(columns, rows, filePath);
-                Console.WriteLine("Файлът е запазен успешно.");
+                sb.AppendLine($"\"{string.Join(",", values)}\"");
             }
+
+            Console.Write("Въведи път за запис на .csv файл: ");
+            var outputPath = Console.ReadLine();
+            outputPath = EnsureCsvExtension(outputPath);
+
+            File.WriteAllText(outputPath, sb.ToString(), Encoding.UTF8);
+
+            Console.WriteLine("Успешно конвертирано.");
+        }
+
+        static void CustomTableEntry()
+        {
+            Console.Write("Въведи имена на колоните, разделени със запетая (напр. Име,Възраст,Град(TRQBVA DA SE PISHE NA LATINICA!!!)): ");
+            var columnInput = Console.ReadLine();
+            var columns = columnInput.Split(',').Select(c => c.Trim()).ToList();
+
+            var rows = new List<List<string>>();
+
+            while (true)
+            {
+                var currentRow = new List<string>();
+                Console.WriteLine("Въведи стойности за ред:");
+
+                foreach (var column in columns)
+                {
+                    Console.Write($"{column}: ");
+                    currentRow.Add(Console.ReadLine());
+                }
+
+                rows.Add(currentRow);
+
+                Console.Write("Добави още ред? (y/n): ");
+                if (Console.ReadLine().ToLower() != "y") break;
+            }
+
+            Console.Write("Въведи път за запис на .csv файл: ");
+            var filePath = Console.ReadLine();
+            filePath = EnsureCsvExtension(filePath);
+
+            CsvExporter.ExportCustomListToCsv(columns, rows, filePath);
+            Console.WriteLine("Файлът е запазен успешно.");
+        }
+
+        static string EnsureCsvExtension(string path)
+        {
+            if (!path.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                path += ".csv";
+            }
+            return path;
         }
     }
 }
