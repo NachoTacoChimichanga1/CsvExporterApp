@@ -46,10 +46,10 @@ namespace CsvExporterLibrary
             {
                 var safeRow = row.Select(value =>
                 {
-                    var val = value?.Replace("\"", "\"\"") ?? "";
-                    if (val.Contains(",") || val.Contains("\"") || val.Contains("\n"))
-                        val = $"\"{val}\"";
-                    return val;
+                    var entry = value?.Replace("\"", "\"\"") ?? "";
+                    if (entry.Contains(",") || entry.Contains("\"") || entry.Contains("\n"))
+                        entry = $"\"{entry}\"";
+                    return entry;
                 });
 
                 sb.AppendLine(string.Join(",", safeRow));
