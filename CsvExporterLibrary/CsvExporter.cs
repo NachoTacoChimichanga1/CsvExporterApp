@@ -20,7 +20,7 @@ namespace CsvExporterLibrary
             foreach (var item in list)
             {
                 var values = properties
-                    .Select(p => p.GetValue(item)?.ToString()?.Replace(",", " ") ?? "");
+                    .Select(p => p.GetValue(item)?.ToString().Replace(",", " ") ?? "");
                 sb.AppendLine($"\"{string.Join(",", values)}\"");
             }
 

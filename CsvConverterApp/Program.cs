@@ -94,7 +94,7 @@ namespace MyApp
             while (true)
             {
                 var currentRow = new List<string>();
-                Console.WriteLine("Въведи стойности за ред:");
+                Console.WriteLine("Въведи стойности за реда:");
 
                 foreach (var column in columns)
                 {
@@ -104,7 +104,7 @@ namespace MyApp
 
                 rows.Add(currentRow);
 
-                Console.Write("Добави още ред? (y/n): ");
+                Console.Write("Добави още един ред? (y/n): ");
                 if (Console.ReadLine().ToLower() != "y") break;
             }
 
