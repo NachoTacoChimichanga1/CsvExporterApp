@@ -95,7 +95,7 @@ namespace MyApp
 
         static void CustomTableEntry()
         {
-            Console.Write("Въведи имена на колоните, разделени със запетая (напр. Name,Age,City): ");
+            Console.Write("Въведи имена на колоните, разделени със запетая (NA LATINICA!!!): ");
             var columnInput = Console.ReadLine();
             var columns = columnInput.Split(',').Select(c => c.Trim()).ToList();
 
