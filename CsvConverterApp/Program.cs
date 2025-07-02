@@ -24,7 +24,7 @@ namespace MyApp
             {
                 Console.WriteLine("\nИзбери опция:");
                 Console.WriteLine("1. Избери .xlsx файл и го конвертирай в .csv");
-                Console.WriteLine("2. Създай произволна таблица (с колони и стойности) и експортирай");
+                Console.WriteLine("2. Създай произволна таблица и експортирай");
                 Console.WriteLine("0. Изход");
                 Console.Write("Избор: ");
 
@@ -63,16 +63,26 @@ namespace MyApp
 
             var sb = new StringBuilder();
 
+            //popravka
             while (reader.Read())
             {
                 var values = new List<string>();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    values.Add(reader.GetValue(i)?.ToString().Replace(", ", " ") ?? "");
+                    var value = reader.GetValue(i)?.ToString() ?? "";
+
+                    if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+                    {
+                        value = value.Replace("\"", "\"\"");
+                        value = $"\"{value}\"";
+                    }
+
+                    values.Add(value);
                 }
 
-                sb.AppendLine($"\"{string.Join(", ", values)}\"");
+                sb.AppendLine(string.Join(",", values));
             }
+            //gotovo
 
             Console.Write("Въведи път за запис на .csv файл: ");
             var outputPath = Console.ReadLine();
@@ -85,7 +95,7 @@ namespace MyApp
 
         static void CustomTableEntry()
         {
-            Console.Write("Въведи имена на колоните, разделени със запетая (напр. Име,Възраст,Град(TRQBVA DA SE PISHE NA LATINICA!!!)): ");
+            Console.Write("Въведи имена на колоните, разделени със запетая (напр. Name,Age,City): ");
             var columnInput = Console.ReadLine();
             var columns = columnInput.Split(',').Select(c => c.Trim()).ToList();
 
